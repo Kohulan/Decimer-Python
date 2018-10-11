@@ -111,6 +111,9 @@ y_test_enc = one_hot(y_test, n_classes)
 correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(Y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
+#predicted labels vs original labels for statistics
+pred = tf.subtract(tf.argmax(logits, 1), tf.argmax(Y, 1))
+
 #Initiating data for plots
 loss_history = []
 acc_history = []
@@ -197,6 +200,10 @@ with tf.Session() as sess:
 						print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Accuracy:", test_acc)
 						acc_history.append(test_acc)
 						difference_history.append(accu_train-test_acc)
+						
+						_, predict = sess.run([loss_op,pred], feed_dict={X: X_test, Y: Y_test})
+						print (predict)
+						
 						count = j+count
 						#print (count)
 						break

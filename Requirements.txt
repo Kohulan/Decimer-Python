@@ -1,0 +1,6 @@
+matplotlib
+numpy
+pickle
+lz4
+tensorflow-gpu
+guppy

@@ -56,7 +56,7 @@ def one_hot(y, n_labels):
 	return mat
 
 # Parameters
-learning_rate = 0.001
+learning_rate = 0.005
 training_epochs = 30
 batch_size = 1000
 dibeginay_step = 1
@@ -135,8 +135,8 @@ def test_array_build():
 		for i in range(len(test_items)):
 			if i == counttest+j:
 				strarray_test=lz.decompress(Test_Images.values()[i])
-				r = []
-				r = list(map(float,strarray_test.split(',')))
+				#r = []
+				r = np.fromstring(strarray, dtype=float, sep=',')
 				fint.append(r)
 				j+=1
 				if j == testbatch_size:
@@ -171,8 +171,8 @@ with tf.Session() as sess:
 			for i in range(len(train_items)):
 				if i == count+j:
 					strarray=lz.decompress(Train_Images.values()[i])
-					q = []
-					q = list(map(float,strarray.split(',')))
+					#q = []
+					q = np.fromstring(strarray, dtype=float, sep=',')
 					fin.append(q)
 					j+=1
 					if j == batch_size:

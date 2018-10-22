@@ -57,7 +57,7 @@ def one_hot(y, n_labels):
 
 # Parameters
 learning_rate = 0.005
-training_epochs = 10
+training_epochs = 1
 batch_size = 175
 display_step = 1
 testbatch_size = 125
@@ -205,9 +205,9 @@ with tf.Session() as sess:
 						_, predict,error = sess.run([loss_op,pred,pred_difference], feed_dict={X: X_test, Y: Y_test})
 						
 						print(predict)
-						mean_error.append(np.mean(error))
-						median_error.append(np.median(error))
-						maximum_error.append(np.amax(error))
+						mean_error.append(np.absolute(np.mean(error)))
+						median_error.append(np.absolute(np.median(error)))
+						maximum_error.append(np.absolute(np.amax(error)))
 												
 						difference_history.append(accu_train-test_acc)
 						
@@ -236,6 +236,7 @@ plt.xlabel('Epoch x Batches')
 plt.ylabel('Loss Value')
 plt.legend(ncol=2, loc='upper right')
 plt.subplot(3,1,2)
+plt.gca().set_ylim([0,1.0])
 plt.plot(valid_history, '-o', label='Train Accuracy value')
 plt.plot(acc_history, '-o', label='Test Accuracy value')
 plt.plot(difference_history, '-o', label='Train-Test Accuracy')

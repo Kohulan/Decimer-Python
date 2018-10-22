@@ -17,7 +17,7 @@ from numpy import array
 import pickle
 import lz4.frame as lz
 
-f = open('Report20180924.txt' , 'w',0)
+f = open('newtime_20181019.txt' , 'w',0)
 sys.stdout = f
 
 print(datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"packages loaded\n")
@@ -28,7 +28,7 @@ def label_data(is_test=False):
 	data_path = "train"
 	if is_test:
 		data_path = "test"
-	myFile = open('/media/data_drive/DECIMER_Test_Data/arrays/dataset/Labels_'+data_path+'.csv',"r")
+	myFile = open('Labels_'+data_path+'.csv',"r")
 	labels = []
 	for row in myFile:
 		x = int(row.strip().split(",")[1])
@@ -57,15 +57,15 @@ def one_hot(y, n_labels):
 
 # Parameters
 learning_rate = 0.005
-training_epochs = 30
-batch_size = 1000
-dibeginay_step = 1
-testbatch_size = 1000
+training_epochs = 10
+batch_size = 175
+display_step = 1
+testbatch_size = 125
 
 # Network Parameters
 n_hidden_1 = 256 # 1st layer number of neurons
 n_input = 1024*1024 # Data input (Image shape: 1024 * 1024)
-n_classes = 132 # Bond_Count
+n_classes = 90 # Bond_Count
 
 # tf Graph input
 X = tf.placeholder("float", [None, n_input])
@@ -111,8 +111,12 @@ y_test_enc = one_hot(y_test, n_classes)
 correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(Y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-#predicted labels vs original labels for statistics
-pred = tf.subtract(tf.argmax(logits, 1), tf.argmax(Y, 1))
+# Evaluate the errors, mean,median and maximum errors
+pred = tf.argmax(logits, 1)
+pred_difference = tf.subtract(tf.argmax(Y, 1),tf.argmax(logits, 1))
+mean_error=[]
+median_error=[]
+maximum_error=[]
 
 #Initiating data for plots
 loss_history = []
@@ -120,15 +124,15 @@ acc_history = []
 valid_history = []
 acc_valid_history = []
 difference_history = []
-#totaltest_batch = int(len(y_test)/testbatch_size)
-#user_test=1000
+
+totaltest_batch = int(len(y_test)/testbatch_size)
 print ("All good!")
 
 
 # Calculate accuracy
 def test_array_build():
 	counttest=0
-	for l in range(1):
+	for l in range(totaltest_batch):
 		strarray = []
 		j=0 #Counter
 		fint = []
@@ -136,11 +140,10 @@ def test_array_build():
 			if i == counttest+j:
 				strarray_test=lz.decompress(Test_Images.values()[i])
 				#r = []
-				r = np.fromstring(strarray, dtype=float, sep=',')
+				r = np.fromstring(strarray_test, dtype=float, sep=',')
 				fint.append(r)
 				j+=1
 				if j == testbatch_size:
-					print ("Im Here!!")
 					loadedImagest = np.array(fint).astype(np.float32)
 					test_array_enc=(1.0-loadedImagest/255.0)
 					counttest = j+counttest
@@ -199,23 +202,26 @@ with tf.Session() as sess:
 						test_acc = accuracy.eval({X: X_test, Y: Y_test})
 						print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Accuracy:", test_acc)
 						acc_history.append(test_acc)
+						_, predict,error = sess.run([loss_op,pred,pred_difference], feed_dict={X: X_test, Y: Y_test})
+						
+						print(predict)
+						mean_error.append(np.mean(error))
+						median_error.append(np.median(error))
+						maximum_error.append(np.amax(error))
+												
 						difference_history.append(accu_train-test_acc)
 						
-						_, predict = sess.run([loss_op,pred], feed_dict={X: X_test, Y: Y_test})
-						print (predict)
-						
 						count = j+count
-						#print (count)
 						break
 		validation_accuracy = total_correct_preds/total_batch
 		print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Train accuracy:",validation_accuracy)
 		acc_valid_history.append(validation_accuracy)
 
 		 # Dibeginay logs per epoch step
-		if epoch % dibeginay_step == 0:
+		if epoch % display_step == 0:
 			print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Epoch:", '%04d' % (epoch+1), "cost={:.9f}".format(avg_cost))
 	print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Optimization Finished!")
-
+	#print (acc_history)
 
 
 
@@ -238,11 +244,13 @@ plt.xlabel('Batches')
 plt.ylabel('Accuracy')
 plt.legend(ncol=2, loc='lower right')
 plt.subplot(3,1,3)
-plt.plot(acc_valid_history, '-o', label='Final Train Accuracy value')
+plt.plot(mean_error, '-o', label='Mean of error')
+plt.plot(median_error, '-o', label='Median of error')
+plt.plot(maximum_error, '-o', label='Maximum error')
 plt.xlabel('Batches')
-plt.ylabel('Accuracy')
+plt.ylabel('Error')
 plt.legend(ncol=2, loc='lower right')
 plt.gcf().set_size_inches(15, 30)
-plt.savefig('Plot_Final20180924.png')
+plt.savefig('Plot_new.png')
 plt.close()
 

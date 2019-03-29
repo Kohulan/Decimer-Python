@@ -58,8 +58,8 @@ def one_hot(y, n_labels):
 
 #Training Parameters
 learning_rate = 0.004
-epochs = 100
-batch_size = 128
+epochs = 2
+batch_size = 256
 display_step = 1
 testbatch_size = 128
 totaltrain_batch = len(train_items)/batch_size
@@ -113,18 +113,11 @@ def conv_net(x, weights, biases, dropout):
     fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'])
     fc1 = tf.nn.relu(fc1)
 
-    fc2 = tf.add(tf.matmul(fc1, weights['wd2']), biases['bd2'])
-    fc2 = tf.nn.relu(fc2)
-
-    fc3 = tf.add(tf.matmul(fc2, weights['wd3']), biases['bd3'])
-    fc3 = tf.nn.relu(fc3)
-
-
     # Apply Dropout
-    fc3 = tf.nn.dropout(fc3, dropout)
+    fc1 = tf.nn.dropout(fc1, dropout)
 
     # Output, class prediction
-    out = tf.add(tf.matmul(fc3, weights['out']), biases['out'])
+    out = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
     return out
 
 # Store layers weight & bias
@@ -132,20 +125,16 @@ weights = {
     # 12x12 conv, 1 input, 32 outputs
     'wc1': tf.Variable(tf.random_normal([5, 5, 1, 64])),
     'wc2': tf.Variable(tf.random_normal([3, 3, 64, 128])),
-    # fully connected, 7*7*32 inputs, 1024 outputs
-    'wd1': tf.Variable(tf.random_normal([32*32*128, 2048])),
-    'wd2': tf.Variable(tf.random_normal([2048, 2048])),
-    'wd3': tf.Variable(tf.random_normal([2048,1024])),
-    # 1024 inputs, 10 outputs (class prediction)
+    # fully connected, 32*32*128 inputs, 1024 outputs
+    'wd1': tf.Variable(tf.random_normal([32*32*128, 1024])),
+    # 1024 inputs, 133 outputs (class prediction)
     'out': tf.Variable(tf.random_normal([1024, num_classes]))
 }
 
 biases = {
     'bc1': tf.Variable(tf.random_normal([64])),
     'bc2': tf.Variable(tf.random_normal([128])),
-    'bd1': tf.Variable(tf.random_normal([2048])),
-    'bd2': tf.Variable(tf.random_normal([2048])),
-    'bd3': tf.Variable(tf.random_normal([1024])),
+    'bd1': tf.Variable(tf.random_normal([1024])),
     'out': tf.Variable(tf.random_normal([num_classes]))
 }
 
@@ -183,28 +172,12 @@ loss_history = []
 acc_history = []
 valid_history = []
 acc_valid_history = []
-difference_history = []
+acc_test_history = []
 
 print ("All good!")
 
 #-----------------------------------------------------------------------------------------------------------------
 print ("Total available threads for multiprocessing: ",multiprocessing.cpu_count())
-
-#Decompressing Lines Test
-def decomp_test(k):
-	strarraytest = (lz.decompress(Test_Images.values()[k]))
-	floatarray_test = np.fromstring(strarraytest, dtype=float, sep=',')
-	floatarray32_test = np.array(floatarray_test).astype(np.float32)
-	#encoded_array_test=(1.0-floatarray32_test/255.0)
-	return floatarray32_test
-
-pool_test = multiprocessing.Pool()
-
-def test_array_build():
-	result = pool_test.map(decomp_test,range(testbatch_size))
-	return result
-
-temp = test_array_build()
 
 #Decompressing Lines Test
 def decomp_test_final(m):
@@ -235,12 +208,13 @@ pool_train = multiprocessing.Pool()
 
 #Network training
 print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Training Started")
+
 #GPU settings
 config = tf.ConfigProto(allow_soft_placement=True)
 config.gpu_options.allow_growth = True
 config.gpu_options.allocator_type = 'BFC'
 # Start training
-# Start training
+
 with tf.Session(config=config) as sess:
 	sess.run(init)
 
@@ -262,15 +236,18 @@ with tf.Session(config=config) as sess:
 			sess.run(train_op, feed_dict={X: batch_x,Y: batch_y, keep_prob: dropout})
 			loss,accu_train = sess.run([loss_op, accuracy], feed_dict={X: batch_x,Y: batch_y,keep_prob: 1.0})
 			loss_history.append(loss)
-			#print (epoch,"I'm Here")
+			
 			#Validation and calculating training accuracy
 			valid_history.append(accu_train)
-			#total_correct_preds += accu_train
+			total_correct_preds += accu_train
 			print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Loss={:.2f}".format(loss),"Mini batch accuracy:",accu_train)
 			counter += len(train_batchX)
 			
 		validation_accuracy = total_correct_preds/totaltrain_batch
 		print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Train accuracy:",validation_accuracy)
+		Test_accuracy = sess.run(accuracy, feed_dict={X: temp_final[0:128], Y: y_test_enc[0:128], keep_prob: 1.0})
+		print("Testing Accuracy:",Test_accuracy)
+		acc_test_history.append(Test_accuracy)
 		acc_valid_history.append(validation_accuracy)
 
 		 # Dibeginay logs per epoch step
@@ -278,33 +255,31 @@ with tf.Session(config=config) as sess:
 		#	print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Epoch:", '%04d' % (epoch+1), "cost={:.9f}".format(avg_cost))
 	print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Optimization Finished!")
 	
-	print("Testing Accuracy:",sess.run(accuracy, feed_dict={X: temp_final[0:512], Y: y_test_enc[0:512], keep_prob: 1.0}))
+	print("Testing Accuracy:",sess.run(accuracy, feed_dict={X: temp_final[0:256], Y: y_test_enc[0:256], keep_prob: 1.0}))
 	#print (acc_history)
 f.close()
 
 #Matplot plot depiction
-plt.subplot(2,1,1)
+plt.subplot(3,1,1)
 plt.plot(loss_history, '-o', label='Loss value')
 plt.title('Training Loss')
 plt.xlabel('Epoch x Batches')
 plt.ylabel('Loss Value')
 plt.legend(ncol=2, loc='upper right')
-plt.subplot(2,1,2)
+plt.subplot(3,1,2)
 plt.gca().set_ylim([0,1.0])
 plt.plot(valid_history, '-o', label='Train Accuracy value')
-plt.plot(acc_valid_history, '-o', label='Average Accuracy value')
 #plt.plot(difference_history, '-o', label='Train-Test Accuracy')
 plt.title('Train & Test Accuracy')
 plt.xlabel('Batches')
 plt.ylabel('Accuracy')
 plt.legend(ncol=2, loc='lower right')
-#plt.subplot(3,1,3)
-#plt.plot(mean_error, '-o', label='Mean of error')
-#plt.plot(median_error, '-o', label='Median of error')
-#plt.plot(maximum_error, '-o', label='Maximum error')
+plt.subplot(3,1,3)
+plt.plot(acc_valid_history, '-o', label='Average Accuracy value')
+plt.plot(acc_test_history, '-o', label='Average Accuracy value')
 #plt.xlabel('Batches')
 #plt.ylabel('Error')
 #plt.legend(ncol=2, loc='lower right')
 plt.gcf().set_size_inches(15, 30)
-plt.savefig('CNN_report_alexnet_modified.png')
+plt.savefig('CNN_report1.png')
 plt.close()

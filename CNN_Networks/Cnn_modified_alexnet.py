@@ -59,7 +59,7 @@ def one_hot(y, n_labels):
 #Training Parameters
 learning_rate = 0.004
 epochs = 2
-batch_size = 256
+batch_size = 128
 display_step = 1
 testbatch_size = 128
 totaltrain_batch = len(train_items)/batch_size
@@ -100,7 +100,7 @@ def conv_net(x, weights, biases, dropout):
     conv1 = conv2d(x, weights['wc1'], biases['bc1'],strides=2)#126 with filter of 12x12
     print (tf.shape(conv1,out_type=tf.int32))
     # Max Pooling (down-sampling)
-    conv1 = maxpool2d(conv1,k=2,strides = 2)#42
+    conv1 = maxpool2d(conv1,k=2,strides = 1)#42
     
      # Convolution Layer
     conv2 = conv2d(conv1, weights['wc2'], biases['bc2'],strides=2)#20 with filter of 4x4
@@ -124,16 +124,16 @@ def conv_net(x, weights, biases, dropout):
 weights = {
     # 12x12 conv, 1 input, 32 outputs
     'wc1': tf.Variable(tf.random_normal([5, 5, 1, 64])),
-    'wc2': tf.Variable(tf.random_normal([3, 3, 64, 128])),
+    'wc2': tf.Variable(tf.random_normal([3, 3, 64, 96])),
     # fully connected, 32*32*128 inputs, 1024 outputs
-    'wd1': tf.Variable(tf.random_normal([32*32*128, 1024])),
+    'wd1': tf.Variable(tf.random_normal([64*64*96, 1024])),
     # 1024 inputs, 133 outputs (class prediction)
     'out': tf.Variable(tf.random_normal([1024, num_classes]))
 }
 
 biases = {
     'bc1': tf.Variable(tf.random_normal([64])),
-    'bc2': tf.Variable(tf.random_normal([128])),
+    'bc2': tf.Variable(tf.random_normal([96])),
     'bd1': tf.Variable(tf.random_normal([1024])),
     'out': tf.Variable(tf.random_normal([num_classes]))
 }
@@ -268,18 +268,20 @@ plt.ylabel('Loss Value')
 plt.legend(ncol=2, loc='upper right')
 plt.subplot(3,1,2)
 plt.gca().set_ylim([0,1.0])
-plt.plot(valid_history, '-o', label='Train Accuracy value')
+plt.plot(valid_history, '-o', label='Mini batch accuracy value')
 #plt.plot(difference_history, '-o', label='Train-Test Accuracy')
-plt.title('Train & Test Accuracy')
+plt.title('Mini Batch accuracy')
 plt.xlabel('Batches')
 plt.ylabel('Accuracy')
 plt.legend(ncol=2, loc='lower right')
 plt.subplot(3,1,3)
-plt.plot(acc_valid_history, '-o', label='Average Accuracy value')
-plt.plot(acc_test_history, '-o', label='Average Accuracy value')
-#plt.xlabel('Batches')
-#plt.ylabel('Error')
-#plt.legend(ncol=2, loc='lower right')
+plt.gca().set_ylim([0,1.0])
+plt.title('Train & Test Accuracy')
+plt.plot(acc_valid_history, '-o', label='Train Accuracy value')
+plt.plot(acc_test_history, '-o', label='Test Accuracy value')
+plt.xlabel('Batches')
+plt.ylabel('Accuracy')
+plt.legend(ncol=2, loc='lower right')
 plt.gcf().set_size_inches(15, 30)
 plt.savefig('CNN_report1.png')
 plt.close()

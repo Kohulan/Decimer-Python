@@ -1,0 +1,19 @@
+- name: Delete instances ("{{ instances }}")
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+      service_account_email: Your_service_account@developer.gserviceaccount.com
+      credentials_file: /path/to/key.json
+      project_id: your_project_id
+      
+  tasks:
+    - name: Delete instances ("{{ instances }}")
+      gce:
+          instance_names: "{{ instances }}"
+          zone: us-central1-c
+          service_account_email: "{{ service_account_email }}"
+          credentials_file: "{{ credentials_file }}"
+          project_id: "{{ project_id }}"
+          state: absent

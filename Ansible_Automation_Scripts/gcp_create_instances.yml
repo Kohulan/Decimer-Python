@@ -1,0 +1,39 @@
+- name: Create instances ("{{ instances }}")
+  hosts: localhost
+
+  vars:
+      service_account_email: Your_service_account@developer.gserviceaccount.com
+      credentials_file: /path/to/key.json
+      project_id: your_project_id
+      
+  tasks:
+    - name: Launch instances ("{{ instances }}")
+      gce:
+          instance_names: "{{ instances }}"
+          zone: us-central1-c
+          machine_type: n1-standard-1
+          image: debian
+          state: present
+          service_account_email: "{{ service_account_email }}"
+          credentials_file: "{{ credentials_file }}"
+          project_id: "{{ project_id }}"
+          disk_size: 50
+          disk_auto_delete: true
+          preemptible: true
+          tags: ansible
+          metadata : '{ "startup-script" : "sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install python-pip -y && sudo pip install tensorflow matplotlib lz4" }'
+      register: gce
+
+    - name: Wait for SSH to come up ("{{ instances }}")
+      wait_for: host={{ item.public_ip }} port=22 delay=10 timeout=60
+      with_items: "{{ gce.instance_data }}"
+
+    - name: Add host to groupname ("{{ instances }}")
+      add_host: hostname={{ item.public_ip }} groupname=new_instances
+      with_items: "{{ gce.instance_data }}"
+    
+    - name: Save host data ("{{ instances }}")
+      add_host:
+        hostname: "{{ item.public_ip }}"
+        groupname: gce_instances
+      with_items: "{{ gce.instance_data }}"

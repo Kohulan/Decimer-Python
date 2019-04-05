@@ -2,9 +2,8 @@
 
 ## Getting started
 You can find the more detailed documentation on https://docs.ansible.com
-```bash
-git clone https://github.com/Kohulan/Decimer-Python/Ansible_Automation_Scripts && cd $_
-```
+
+Note: Download the yaml scripts to a folder and run the commands given below.
 
 ## Installation of Ansible and related modules on a linux environment
 
@@ -17,7 +16,7 @@ sudo apt-get install ansible
 
 Make sure that your Google clous shell is intalled on the same computer you are working on.
 
-Update pip and install the requirements
+### Update pip and install the requirements
 
 ```bash
 pip install --upgrade pip

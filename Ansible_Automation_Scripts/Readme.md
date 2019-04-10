@@ -14,7 +14,7 @@ sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt-get install ansible
 ```
 
-Make sure that your Google clous shell is intalled on the same computer you are working on.
+Make sure that your Google cloud shell is intalled on the same computer that you are working on.
 
 ### Update pip and install the requirements
 

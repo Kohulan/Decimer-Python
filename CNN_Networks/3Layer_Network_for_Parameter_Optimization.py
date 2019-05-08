@@ -158,6 +158,7 @@ for hidden_neurons in range(len(hidden_neurons_list)):
 
 			temp = test_array_build()
 			print (len(temp))
+			pool_test.close()
 
 			def decomp_train(j):
 				strarray = (lz.decompress(Train_Images.values()[j]))
@@ -231,6 +232,7 @@ for hidden_neurons in range(len(hidden_neurons_list)):
 
 			print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Network completed")
 			f.close()
+			pool_train.close()
 
 			#Matplot plot depiction
 			plt.subplot(3,1,1)

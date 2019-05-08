@@ -267,6 +267,7 @@ def test_array_build_final():
 	return result
 
 temp_final = test_array_build_final()
+pool_test_final.close()
 
 print ("Total test : ",len(temp_final))
 
@@ -329,6 +330,7 @@ with tf.Session(config=config) as sess:
 	print("Testing Accuracy:",sess.run(acc, feed_dict={X: temp_final[0:256], Y: y_test_enc[0:256]}))
 	#print (acc_history)
 f.close()
+pool_train.close()
 
 #Matplot plot depiction
 plt.subplot(3,1,1)

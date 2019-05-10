@@ -241,6 +241,7 @@ for hidden_neurons_I in range(len(hidden_neurons_list_I)):
 					# Final results for various bond counts
 					file_append = open('Path+to+folder/Final_Report.txt' , 'a+')
 					sys.stdout = file_append
+					print("Batch Size_{}_learning_rate_{}_hidden_neurons_{}_x_{}.txt".format(batch_sizer_list[batch_sizer],learning_rate_list[learning_rate_],hidden_neurons_list_I[hidden_neurons_I],hidden_neurons_list_II[hidden_neurons_II]))
 					print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Final Train accuracy:",validation_accuracy)
 					X_test = temp
 					Y_test = y_test_enc
@@ -255,7 +256,7 @@ for hidden_neurons_I in range(len(hidden_neurons_list_I)):
 							if i<=j: 
 								count_error+=1
 						Window_accuracy = float(count_error)/testbatch_size*100
-						print("Currectly predicted bond count with error less than",j," bonds={:.2f}".format(Window_accuracy))
+						print("Currectly predicted bond count with error less than",j," bonds, Accuracy={:.2f}".format(Window_accuracy))
 				file_append.close()
 
 

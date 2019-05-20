@@ -119,6 +119,10 @@ for hidden_neurons in range(len(hidden_neurons_list)):
 			y_data_enc = one_hot(y_train, n_classes)
 			y_test_enc = one_hot(y_test, n_classes)
 
+			#Regularizer (Optional)
+			regularizer = (tf.nn.l2_loss(weights['h1']) + tf.nn.l2_loss(weights['out']))
+			labelsoss_op = tf.reduce_mean(loss_op + 0.01 * regularizer)
+
 			# Evaluate model (with test logits, for dropout to be disabled)
 			correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(Y, 1))
 			accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))

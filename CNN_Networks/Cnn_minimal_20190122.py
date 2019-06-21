@@ -3,7 +3,7 @@
  * Refer to LICENSE or https://opensource.org/licenses/MIT for more information
  * Written by Kohulan Rajan
 '''
-#The first fully working 3 layer network
+#First fully working CNN Network with minimal Convolutional layers.Modified from the tensorflow example code.
 import tensorflow as tf
 import os
 import sys
@@ -66,8 +66,8 @@ totaltrain_batch = len(train_items)/batch_size
 totaltest_batch = len(test_items)/testbatch_size
 
 # Network Parameters
-num_input = (1024*1024) # MNIST data input (img shape: 28*28)
-num_classes = 132 # MNIST total classes (0-9 digits)
+num_input = (1024*1024) # Data input (img shape: 1024*1024)
+num_classes = 132 # Total classes (0-9 digits)
 #dropout = 0.75 # Dropout, probability to keep units
 
 # encoding labels to one_hot vectors
@@ -95,8 +95,7 @@ def maxpool2d(x, k=0):
 
 # Create model
 def conv_net(x, weights, biases):
-    # MNIST data input is a 1-D vector of 784 features (28*28 pixels)
-    # Reshape to match picture format [Height x Width x Channel]
+    # Data input is a 1-D vector of 1048576 features (1024*1024  pixels)
     # Tensor input become 4-D: [Batch Size, Height, Width, Channel]
     x = tf.reshape(x, shape=[-1, 1024, 1024, 1])
 
@@ -110,8 +109,6 @@ def conv_net(x, weights, biases):
     # Max Pooling (down-sampling)
     conv2 = maxpool2d(conv2,k=6)#22  
    
-
-
     # Fully connected layer
     # Reshape conv2 output to fit fully connected layer input
     fc1 = tf.reshape(conv2, [-1, weights['wd1'].get_shape().as_list()[0]])

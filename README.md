@@ -19,8 +19,8 @@ The project is co-supervised by,
   ├── Slurm Scripts/                           # Scripts used to deploy programs on slurm system in ARA
   ├── Tools/                                   # Small scripts written for data curation 
   ├── LICENSE
-  ├── README.md
-  └── Requirements.txt
+  ├── Python_Requirements
+  └── README.md
 ```
 
 

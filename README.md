@@ -8,9 +8,9 @@ The project is co-supervised by,
 - Prof. Christoph Steinbeck, Friedrich Schiller University, Jena.
 - Prof. Achim Zielesny, Westphalian University of Applied Sciences, Recklinghausen.
 
-## The project contains codes which was written throughout the project (Continously updated)
+### The project contains codes which was written throughout the project (Continously updated)
 
-### Top level directory layout
+#### Top level directory layout
 ```bash
   .
   ├── Ansible_Automation_Scripts/              # Scripts which can be used to create and delete instances using Ansible on Google cloud console

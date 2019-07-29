@@ -4,8 +4,9 @@ Deep Learning for Chemical Image Recognition (DECIMER) - Python scripts
 This project hosts the tools and networks written in python which aims to develop methods to employ deep learning to recognize and interpret chemical structures from images in the printed and online literature with the aim of re-discovering scientific facts about natural products and their meta-data. 
 
 The project is co-supervised by,
-Prof. Christoph Steinbeck, Friedrich Schiller University, Jena.
-Prof. Achim Zielesny, Westphalian University of Applied Sciences, Recklinghausen.
+
+- Prof. Christoph Steinbeck, Friedrich Schiller University, Jena.
+- Prof. Achim Zielesny, Westphalian University of Applied Sciences, Recklinghausen.
 
 ## The project contains codes which was written throughout the project (Continously updated)
 

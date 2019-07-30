@@ -23,6 +23,9 @@ The project is co-supervised by,
   └── README.md
 ```
 
+## License:
+- This project is licensed under the MIT License - see the [LICENSE](https://github.com/Kohulan/Decimer-Python/blob/master/LICENSE) file for details
 
-
+## Author:
+- [Kohulan](github.com/Kohulan)
 

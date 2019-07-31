@@ -51,7 +51,7 @@ for hidden_neurons_I in range(len(hidden_neurons_list_I)):
 					data_path = "train"
 					if is_test:
 						data_path = "test"
-					myFile = open('/Data/New'+data_path+'_labels.csv',"r")
+					myFile = open('/Data/Potential'+data_path+'_labels.csv',"r")
 					labels = []
 					for row in myFile:
 						x = int(row.strip().split(",")[1])
@@ -66,7 +66,7 @@ for hidden_neurons_I in range(len(hidden_neurons_list_I)):
 
 				#Image array data
 				Train_Images = pickle.load( open("/Data/train_compressed.txt","rb"))
-				Test_Images = pickle.load( open("/Data/est_compressed.txt","rb"))
+				Test_Images = pickle.load( open("/Data/test_compressed.txt","rb"))
 				train_items = Train_Images.items()
 				test_items = Test_Images.items()
 				print (datetime.now().strftime('%Y/%m/%d %H:%M:%S'),"Loading done! Train",len(train_items))
@@ -290,7 +290,7 @@ for hidden_neurons_I in range(len(hidden_neurons_list_I)):
 						print("Currectly predicted bond count with error less than",j,"bonds, Accuracy ={:.2f}".format(Window_accuracy))
 				file_append.close()
                                 
-                #Matplot plot depiction
+                                #Matplot plot depiction
 				plt.subplot(3,1,1)
 				plt.plot(loss_history, '-o', label='Train Loss value')
 				plt.title('Training & Tesing Loss')

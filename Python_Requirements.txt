@@ -4,3 +4,5 @@ pickle
 lz4
 tensorflow-gpu
 guppy
+csv
+multiprocessing

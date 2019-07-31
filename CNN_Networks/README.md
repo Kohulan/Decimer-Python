@@ -1,4 +1,4 @@
-#Convolutional Neural Networks to work on Compressed data of 2D Image arrays
+# Convolutional Neural Networks to work on Compressed data of 2D Image arrays
 
 ## Contents :
 ```

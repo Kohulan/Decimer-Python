@@ -36,6 +36,10 @@ $ ansible-playbook gcp_create_instances.yml -e instances= Instance01,Instance02
 $ ansible-playbook gcp_delete_instances.yml -e instances= Instance01,Instance02
 ```
 
+## License:
+- This project is licensed under the MIT License - see the [LICENSE](https://github.com/Kohulan/Decimer-Python/blob/master/LICENSE) file for details
 
+## Author:
+- [Kohulan](github.com/Kohulan)
 
 

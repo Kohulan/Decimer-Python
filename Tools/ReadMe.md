@@ -80,7 +80,14 @@
 
 - Tanimoto_Calculator_for_predictions.py
   - Tanimoto calculations implementation for predictions
-  
+
+
+## License:
+- This project is licensed under the MIT License - see the [LICENSE](https://github.com/Kohulan/Decimer-Python/blob/master/LICENSE) file for details
+
+## Author:
+- [Kohulan](github.com/Kohulan)
+
 ## References
 1- https://lz4.github.io/lz4/
 

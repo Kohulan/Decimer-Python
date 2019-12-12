@@ -11,17 +11,35 @@ from rdkit import DataStructs
 from rdkit.Chem.Fingerprints import FingerprintMols
 import sys
 import numpy as np
-f = open('Output.txt','w')
+import argparse
+
+parser = argparse.ArgumentParser(description="Original Vs Predicted SMILES, Tanimoto similarity check")
+# Input Arguments
+parser.add_argument(
+	'--input',
+	help = 'Enter the input filename',
+	required = True
+	)
+parser.add_argument(
+	'--output',
+	help = 'Enter the output filename as desired',
+	required = True
+)
+args= parser.parse_args()
+
+f = open(args.output,'w')
 
 #sys.stdout = f
 
 smiles = []
 
-with open("Input.txt","r") as fp:
+with open(args.input,"r") as fp:
 	for i,line in enumerate(fp):
-		smi =(line.strip().split("\t")[0])
-		Type = (line.strip().split("\t")[1])
+		smi =(line.strip().split("\t\t")[0])
+		Type = (line.strip().split("\t\t")[1])
 		smiles.append(smi)
+
+ms =[]
 
 for k in range(0,len(smiles),2):
 	#print ("My counter ",  k)
@@ -34,9 +52,15 @@ for k in range(0,len(smiles),2):
 		tani = DataStructs.TanimotoSimilarity(fps1,fps2)
 		f.write(smiles[k]+"   Original Smiles\t")
 		f.write(smiles[k+1]+"   Predicted Smiles\t")
-		f.write("Tanimoto Smilarity : "+ str(tani)+"\n")
+		f.write("Tanimoto Smilarity :\t"+ str(tani)+"\n")
 		#print("Original : ",k,"Predicted : ",k+1," Tanimoto Smilarity : ",tani)
 	except Exception as e:
-		f.write(smiles[k]+"   Original Smiles\t" +smiles[k+1]+"   Predicted Smiles\tSmiles String rejected\n")
+		f.write(smiles[k]+"   Original Smiles\t")
+		f.write(smiles[k+1]+"   Predicted Smiles\t")
+		f.write("Smiles String rejected\n")
 		continue
+
+
+
+
 f.close()

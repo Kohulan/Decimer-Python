@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/148613148.svg)](https://zenodo.org/badge/latestdoi/148613148)
 # Decimer-Python
 Deep Learning for Chemical Image Recognition (DECIMER) - Python scripts
 
